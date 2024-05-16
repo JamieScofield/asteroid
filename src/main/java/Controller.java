@@ -1,6 +1,13 @@
 
+import javafx.animation.RotateTransition;
+import javafx.scene.transform.Rotate;
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Polygon;
+import javafx.util.Duration;
 
 public class Controller {
     private Polygon spaceship;
@@ -70,6 +77,23 @@ public class Controller {
             default:
                 break;
         }
+    }
+
+    public void onMouseClick(MouseEvent event) {
+       double mouseClickXPosition = event.getX();
+       double mouseClickYPosition = event.getY();
+       double angle = calculateAngleFromMousePosition(mouseClickYPosition, mouseClickXPosition);
+       createRotateObject((int)angle);
+    }
+
+    private void createRotateObject(int angle) {
+        Rotate rotate = new Rotate(angle, 300, 270);
+        System.out.println(angle);
+        spaceship.getTransforms().add(rotate);
+    }
+
+    private double calculateAngleFromMousePosition(double mouseClickYPosition, double mouseClickXPosition) {
+
     }
 
     public void moveUp() {

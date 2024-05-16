@@ -18,6 +18,7 @@ public class Launch extends Application {
 
         main.setOnKeyPressed(controller::onKeyPressed);
         main.setOnKeyReleased(controller::onKeyRelease);
+        main.setOnMousePressed(controller::onMouseClick);
         primaryStage.setScene(main);
         primaryStage.show();
     }
@@ -25,8 +26,8 @@ public class Launch extends Application {
         Polygon spaceship = new Polygon();
         spaceship.getPoints().addAll(
                 300.0, 300.0,
-                315.0, 270.0,
-                285.0, 270.0);
+                310.0, 270.0,
+                290.0, 270.0);
         spaceship.setFill(Color.WHITE);
         return spaceship;
     }
