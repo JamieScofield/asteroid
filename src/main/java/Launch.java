@@ -1,6 +1,8 @@
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.application.Application;
 import javafx.scene.Group;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
@@ -12,16 +14,18 @@ public class Launch extends Application {
 
         Group root = new Group();
         Group spaceship = createSpaceship();
+        Circle bullet = createBullet();
         SpaceshipController spaceshipController = new SpaceshipController(spaceship);
-        GunController gunController = new GunController(spaceship);
+        GunController gunController = new GunController(spaceship, bullet);
         root.getChildren().add(spaceship);
+        root.getChildren().add(bullet);
         primaryStage.setTitle("Asteroids");
         Scene main = new Scene(root, Constants.getScreenWidth(), Constants.getScreenHeight(), Color.BLACK);
 
         main.setOnKeyPressed(spaceshipController::onKeyPressed);
         main.setOnKeyReleased(spaceshipController::onKeyRelease);
-        main.setOnMousePressed(spaceshipController::turnSpaceship);
-//        main.setOnMousePressed();
+        main.addEventHandler(MouseEvent.MOUSE_CLICKED, spaceshipController::turnSpaceship);
+        main.addEventHandler(MouseEvent.MOUSE_CLICKED, gunController::fireGun);
         primaryStage.setScene(main);
         primaryStage.show();
     }
@@ -47,5 +51,9 @@ public class Launch extends Application {
         polygon.setFill(Color.WHITE);
         return new Group(polygon, tip, bottom);
 
+    }
+
+    private Circle createBullet() {
+        return new Circle();
     }
 }
