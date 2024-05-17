@@ -19,48 +19,6 @@ public class SpaceshipController {
         this.spaceship = spaceship;
     }
 
-    private void initiateMove() {
-
-        wrapAround();
-
-        if (sPressed) {
-            moveDown();
-        }
-
-        if (dPressed) {
-            moveRight();
-        }
-
-        if (aPressed) {
-            moveLeft();
-        }
-
-        if (wPressed) {
-            moveUp();
-        }
-
-    }
-
-    private void wrapAround() {
-        Bounds spaceshipBounds = spaceship.localToScene(spaceship.getBoundsInLocal());
-        double centerXPosition = spaceshipBounds.getCenterX();
-        double centerYPosition = spaceshipBounds.getCenterY();
-
-        if (centerYPosition > Constants.getScreenHeight()) {
-            spaceship.setTranslateY((-1 * (Constants.getScreenHeight()/2)) +40);
-        }
-        if (centerYPosition < 0) {
-            spaceship.setTranslateY((Constants.getScreenHeight()/2));
-        }
-        if (centerXPosition > Constants.getScreenWidth()) {
-            spaceship.setTranslateX((-1 * (Constants.getScreenWidth()/2)) +50);
-        }
-        if (centerXPosition < 0) {
-            spaceship.setTranslateX((Constants.getScreenWidth()/2));
-        }
-
-    }
-
     public void onKeyPressed(KeyEvent event) {
         switch (event.getCode()){
             case A:
@@ -100,11 +58,27 @@ public class SpaceshipController {
         }
     }
 
-    public void onMouseClick(MouseEvent event) {
+    public void turnSpaceship(MouseEvent event) {
        double mouseClickXPosition = event.getX();
        double mouseClickYPosition = event.getY();
        double angle = calculateAngleFromMousePosition(mouseClickYPosition, mouseClickXPosition);
        createRotateObject((int)angle);
+    }
+
+    public void moveUp() {
+        spaceship.setTranslateY(spaceship.getTranslateY() -5);
+    }
+
+    public void moveDown() {
+        spaceship.setTranslateY(spaceship.getTranslateY() +5);
+    }
+
+    public void moveRight() {
+        spaceship.setTranslateX(spaceship.getTranslateX() +5);
+    }
+
+    public void moveLeft() {
+        spaceship.setTranslateX(spaceship.getTranslateX() -5);
     }
 
     private void createRotateObject(int angle) {
@@ -156,39 +130,27 @@ public class SpaceshipController {
 
     }
 
-    public void moveUp() {
-        spaceship.setTranslateY(spaceship.getTranslateY() -5);
+    private void initiateMove() {
+
+        Environment.wrapAround(spaceship);
+
+        if (sPressed) {
+            moveDown();
+        }
+
+        if (dPressed) {
+            moveRight();
+        }
+
+        if (aPressed) {
+            moveLeft();
+        }
+
+        if (wPressed) {
+            moveUp();
+        }
+
     }
 
-    public void moveDown() {
-        spaceship.setTranslateY(spaceship.getTranslateY() +5);
-    }
 
-    public void moveRight() {
-        spaceship.setTranslateX(spaceship.getTranslateX() +5);
-    }
-
-    public void moveLeft() {
-        spaceship.setTranslateX(spaceship.getTranslateX() -5);
-    }
-
-    public void moveUpRight() {
-        moveUp();
-        moveRight();
-    }
-
-    public void moveUpLeft() {
-        moveUp();
-        moveLeft();
-    }
-
-    public void moveDownRight() {
-        moveDown();
-        moveRight();
-    }
-
-    public void moveDownLeft() {
-        moveDown();
-        moveLeft();
-    }
 }

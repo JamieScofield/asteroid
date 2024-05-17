@@ -12,14 +12,16 @@ public class Launch extends Application {
 
         Group root = new Group();
         Group spaceship = createSpaceship();
-        SpaceshipController controller = new SpaceshipController(spaceship);
+        SpaceshipController spaceshipController = new SpaceshipController(spaceship);
+        GunController gunController = new GunController(spaceship);
         root.getChildren().add(spaceship);
         primaryStage.setTitle("Asteroids");
         Scene main = new Scene(root, Constants.getScreenWidth(), Constants.getScreenHeight(), Color.BLACK);
 
-        main.setOnKeyPressed(controller::onKeyPressed);
-        main.setOnKeyReleased(controller::onKeyRelease);
-        main.setOnMousePressed(controller::onMouseClick);
+        main.setOnKeyPressed(spaceshipController::onKeyPressed);
+        main.setOnKeyReleased(spaceshipController::onKeyRelease);
+        main.setOnMousePressed(spaceshipController::turnSpaceship);
+//        main.setOnMousePressed();
         primaryStage.setScene(main);
         primaryStage.show();
     }
