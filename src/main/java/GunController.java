@@ -30,7 +30,7 @@ public class GunController extends Environment{
         double mouseclickYPosition = event.getY();
         Node spaceshipTip = spaceship.getChildren().get(1);
         Bounds spaceshipTipBounds = spaceshipTip.localToScene(spaceshipTip.getBoundsInLocal());
-        TranslateTransition transition = new TranslateTransition(new Duration(500), bullet);
+        TranslateTransition transition = new TranslateTransition(new Duration(250), bullet);
         transition.setToX(mouseclickXPosition - 400);
         transition.setToY(mouseclickYPosition - 400);
         bullet.setCenterX(spaceshipTipBounds.getCenterX());
@@ -42,6 +42,10 @@ public class GunController extends Environment{
     }
 
     private void deleteBullet () {
-        root.getChildren().remove(bullet);
+        for (int item=root.getChildren().size() -1; item > 0; item--) {
+            if (root.getChildren().get(item) != spaceship) {
+                root.getChildren().remove(item);
+            }
+        }
     }
 }
