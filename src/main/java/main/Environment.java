@@ -1,17 +1,17 @@
+package main;
+
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
-
-
 /*
     This class is for methods that effect everything inside the game
 */
 public class Environment {
     public void wrapAround(Node node) {
-        Bounds spaceshipBounds = node.localToScene(node.getBoundsInLocal());
-        double centerXPosition = spaceshipBounds.getCenterX();
-        double centerYPosition = spaceshipBounds.getCenterY();
+        Bounds nodeBounds = node.localToScene(node.getBoundsInLocal());
+        double centerXPosition = nodeBounds.getCenterX();
+        double centerYPosition = nodeBounds.getCenterY();
 
         if (centerYPosition > Constants.getScreenHeight()) {
             node.setTranslateY((-1 * (Constants.getScreenHeight()/2)) +40);
