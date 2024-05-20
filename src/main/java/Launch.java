@@ -13,19 +13,18 @@ public class Launch extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         Group root = new Group();
-        Group spaceship = createSpaceship();
-        Circle bullet = createBullet();
-        SpaceshipController spaceshipController = new SpaceshipController(spaceship);
-        GunController gunController = new GunController(spaceship, bullet);
-        root.getChildren().add(spaceship);
-        root.getChildren().add(bullet);
-        primaryStage.setTitle("Asteroids");
         Scene main = new Scene(root, Constants.getScreenWidth(), Constants.getScreenHeight(), Color.BLACK);
+        Group spaceship = createSpaceship();
+        SpaceshipController spaceshipController = new SpaceshipController(spaceship);
+        GunController gunController = new GunController(spaceship, root);
+        root.getChildren().add(spaceship);
+        primaryStage.setTitle("Asteroids");
 
         main.setOnKeyPressed(spaceshipController::onKeyPressed);
         main.setOnKeyReleased(spaceshipController::onKeyRelease);
         main.addEventHandler(MouseEvent.MOUSE_CLICKED, spaceshipController::turnSpaceship);
-        main.addEventHandler(MouseEvent.MOUSE_CLICKED, gunController::fireGun);
+        main.addEventHandler(MouseEvent.MOUSE_PRESSED, gunController::fireGun);
+//        main.addEventHandler(MouseEvent.MOUSE_RELEASED, gunController::destroyBullet);
         primaryStage.setScene(main);
         primaryStage.show();
     }
@@ -53,7 +52,4 @@ public class Launch extends Application {
 
     }
 
-    private Circle createBullet() {
-        return new Circle();
-    }
 }
