@@ -9,6 +9,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+
 public class Launch extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -17,17 +18,18 @@ public class Launch extends Application {
         Scene main = new Scene(root, Constants.getScreenWidth(), Constants.getScreenHeight(), Color.BLACK);
         Group spaceship = new Spaceship().getSpaceship();
         Group asteroid = new Astroid().getAstroid();
+        AsteroidController asteroidController = new AsteroidController(asteroid);
         SpaceshipController spaceshipController = new SpaceshipController(spaceship);
         GunController gunController = new GunController(spaceship, root);
         root.getChildren().add(spaceship);
         root.getChildren().add(asteroid);
         primaryStage.setTitle("Asteroids");
-
         main.setOnKeyPressed(spaceshipController::onKeyPressed);
         main.setOnKeyReleased(spaceshipController::onKeyRelease);
         main.addEventHandler(MouseEvent.MOUSE_CLICKED, spaceshipController::turnSpaceship);
-        main.addEventHandler(MouseEvent.MOUSE_CLICKED, gunController::fireGun);
+        main.addEventHandler(MouseEvent.MOUSE_CLICKED, gunController::fireGun);;
         gunController.clearBulletList();
+        asteroidController.startAsteroidAnimation();
         primaryStage.setScene(main);
         primaryStage.show();
     }

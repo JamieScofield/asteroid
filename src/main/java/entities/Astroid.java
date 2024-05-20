@@ -17,7 +17,7 @@ public class Astroid {
         Circle circleBig = new Circle();
 
         circleBig.setFill(Color.WHITE);
-        circleBig.setRadius(5);
+        circleBig.setRadius(10);
         Point2D asteroidSpawnPosition = setAstroidSpawn();
         circleBig.setCenterX(asteroidSpawnPosition.getX());
         circleBig.setCenterY(asteroidSpawnPosition.getY());
