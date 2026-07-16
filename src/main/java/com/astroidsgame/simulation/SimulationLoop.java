@@ -37,16 +37,10 @@ public class SimulationLoop implements Runnable {
 
     @Override
     public void run() {
-        // create the initial spawn of entities
-        AsteroidState initAsteroid = AsteroidState.createAsteroid();
-        currentAsteroids.put(initAsteroid.getId(), initAsteroid);
-
         outputQueue.offer(new SimEvent.EntitySpawned(
                 ship.getId(), EntityType.SHIP, ship.getPosition().x(), ship.getPosition().y(), ship.getRotationDegrees()));
-        outputQueue.offer(new SimEvent.EntitySpawned(
-                initAsteroid.getId(), EntityType.ASTEROID, initAsteroid.getPosition().x(), initAsteroid.getPosition().y(), 0));
+        spawnAsteroid();
 
-        // run the sim loop
         while (running) {
             long tickStart = System.nanoTime();
             tick(tickStart);
@@ -68,16 +62,22 @@ public class SimulationLoop implements Runnable {
 
         updateBullets(nowNanos);
         updateAsteroid(nowNanos);
+        spawnAsteroidIfDue();
+    }
 
-        if (asteroidSpawnCounter >= 50) {
-            AsteroidState newAsteroid = AsteroidState.createAsteroid();
-            currentAsteroids.put(newAsteroid.getId(), newAsteroid);
-
-            outputQueue.offer(new SimEvent.EntitySpawned(
-                    newAsteroid.getId(), EntityType.ASTEROID, newAsteroid.getPosition().x(), newAsteroid.getPosition().y(), 0));
+    private void spawnAsteroidIfDue() {
+        if (asteroidSpawnCounter >= ASTEROID_SPAWN_INTERVAL_TICKS) {
+            spawnAsteroid();
             asteroidSpawnCounter = 0;
         }
         asteroidSpawnCounter++;
+    }
+
+    private void spawnAsteroid() {
+        AsteroidState asteroid = AsteroidState.createAsteroid();
+        currentAsteroids.put(asteroid.getId(), asteroid);
+        outputQueue.offer(new SimEvent.EntitySpawned(
+                asteroid.getId(), EntityType.ASTEROID, asteroid.getPosition().x(), asteroid.getPosition().y(), 0));
     }
 
     private boolean processInput(long nowNanos) {
@@ -102,8 +102,15 @@ public class SimulationLoop implements Runnable {
         ship.setRotationDegrees(ship.getRotationDegrees() + delta);
 
         Vector2D tip = GeometryMath.shipTipPosition(ship.getPosition(), ship.getRotationDegrees());
+        Vector2D direction = new Vector2D(click.x(), click.y()).subtract(tip);
+        Vector2D unitDirection = direction.length() > 0
+                ? direction.normalize()
+                // click landed exactly on the tip - fall back to the ship's facing direction
+                : GeometryMath.rotate(new Vector2D(0, 1), ship.getRotationDegrees());
+        Vector2D velocity = unitDirection.scale(BULLET_SPEED_PER_SECOND);
+
         EntityId bulletId = EntityId.next();
-        BulletState bullet = new BulletState(bulletId, tip, new Vector2D(click.x(), click.y()), nowNanos);
+        BulletState bullet = new BulletState(bulletId, tip, velocity, nowNanos);
         bullets.put(bulletId, bullet);
         outputQueue.offer(new SimEvent.EntitySpawned(bulletId, EntityType.BULLET, tip.x(), tip.y(), 0));
     }
@@ -132,10 +139,11 @@ public class SimulationLoop implements Runnable {
     private void updateBullets(long nowNanos) {
         List<EntityId> expired = new ArrayList<>();
         for (BulletState bullet : bullets.values()) {
-            double t = Math.min(1.0, (nowNanos - bullet.getSpawnNanos()) / (double) BULLET_LIFETIME_NANOS);
-            Vector2D pos = bullet.getSpawnPos().lerp(bullet.getTargetPos(), t);
-            outputQueue.offer(new SimEvent.EntityMoved(bullet.getId(), pos.x(), pos.y(), 0));
-            if (t >= 1.0) {
+            long elapsedNanos = nowNanos - bullet.getSpawnNanos();
+            double elapsedSeconds = elapsedNanos / 1_000_000_000.0;
+            Vector2D position = bullet.getSpawnPos().add(bullet.getVelocity().scale(elapsedSeconds));
+            outputQueue.offer(new SimEvent.EntityMoved(bullet.getId(), position.x(), position.y(), 0));
+            if (elapsedNanos >= BULLET_LIFETIME_NANOS) {
                 expired.add(bullet.getId());
             }
         }

@@ -30,4 +30,17 @@ public record Vector2D(double x, double y) {
     public Vector2D lerp(Vector2D target, double t) {
         return new Vector2D(x + (target.x - x) * t, y + (target.y - y) * t);
     }
+
+    public Vector2D scale(double factor) {
+        return new Vector2D(x * factor, y * factor);
+    }
+
+    // Unit-length vector in the same direction, or ZERO if this vector has no length.
+    public Vector2D normalize() {
+        double length = length();
+        if (length == 0) {
+            return ZERO;
+        }
+        return new Vector2D(x / length, y / length);
+    }
 }

@@ -6,13 +6,13 @@ public class BulletState {
 
     private final EntityId id;
     private final Vector2D spawnPos;
-    private final Vector2D targetPos;
+    private final Vector2D velocity;
     private final long spawnNanos;
 
-    public BulletState(EntityId id, Vector2D spawnPos, Vector2D targetPos, long spawnNanos) {
+    public BulletState(EntityId id, Vector2D spawnPos, Vector2D velocity, long spawnNanos) {
         this.id = id;
         this.spawnPos = spawnPos;
-        this.targetPos = targetPos;
+        this.velocity = velocity;
         this.spawnNanos = spawnNanos;
     }
 
@@ -24,8 +24,8 @@ public class BulletState {
         return spawnPos;
     }
 
-    public Vector2D getTargetPos() {
-        return targetPos;
+    public Vector2D getVelocity() {
+        return velocity;
     }
 
     public long getSpawnNanos() {
