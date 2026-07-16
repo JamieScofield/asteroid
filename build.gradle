@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.1.0'
-    id 'org.javamodularity.moduleplugin' version '1.8.12'
+    id 'org.javamodularity.moduleplugin' version '2.0.0'
     id 'org.beryx.jlink' version '2.25.0'
 }
 
@@ -14,7 +14,7 @@ repositories {
 }
 
 ext {
-    junitVersion = '5.9.2'
+    junitVersion = '6.0.0'
 }
 java {
     sourceCompatibility = JavaVersion.VERSION_25
@@ -36,25 +36,9 @@ application {
 }
 
 dependencies {
-    implementation('org.controlsfx:controlsfx:11.1.2')
-    implementation('com.dlsc.formsfx:formsfx-core:11.6.0') {
-        exclude(group: 'org.openjfx')
-    }
-    implementation('net.synedra:validatorfx:0.4.0') {
-        exclude(group: 'org.openjfx')
-    }
-    implementation('org.kordamp.ikonli:ikonli-javafx:12.3.1')
-    implementation('org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0')
-    implementation('eu.hansolo:tilesfx:17.1.17') {
-        exclude(group: 'org.openjfx')
-    }
-    implementation('com.github.almasb:fxgl:17.2') {
-        exclude(group: 'org.openjfx')
-        exclude(group: 'org.jetbrains.kotlin')
-    }
-
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:${junitVersion}")
 }
 
 test {
