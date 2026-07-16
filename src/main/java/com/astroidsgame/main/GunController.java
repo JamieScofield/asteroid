@@ -1,6 +1,6 @@
-package main;
+package com.astroidsgame.main;
 
-import entities.Bullet;
+import com.astroidsgame.entities.Bullet;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

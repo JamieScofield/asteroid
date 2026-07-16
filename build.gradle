@@ -1,8 +1,8 @@
 plugins {
     id 'java'
     id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'org.javamodularity.moduleplugin' version '1.8.12'
-    id 'org.openjfx.javafxplugin' version '0.0.13'
     id 'org.beryx.jlink' version '2.25.0'
 }
 
@@ -16,22 +16,23 @@ repositories {
 ext {
     junitVersion = '5.9.2'
 }
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
 
-sourceCompatibility = '19'
-targetCompatibility = '19'
+javafx {
+    version = "26.0.1"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
 application {
-    mainModule = 'com.example.astroidsgame'
-    mainClass = 'com.example.astroidsgame.HelloApplication'
-}
-
-javafx {
-    version = '19.0.2'
-    modules = ['javafx.controls', 'javafx.fxml', 'javafx.web', 'javafx.media']
+    mainModule = 'com.astroidsgame.main'
+    mainClass = 'com.astroidsgame.main.Launch'
 }
 
 dependencies {
@@ -60,13 +61,6 @@ test {
     useJUnitPlatform()
 }
 
-jlink {
-    imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-    launcher {
-        name = 'app'
-    }
-}
 
 jlinkZip {
     group = 'distribution'

@@ -1,4 +1,4 @@
-package main;
+package com.astroidsgame.main;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;

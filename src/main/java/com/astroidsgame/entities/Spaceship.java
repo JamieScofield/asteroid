@@ -1,4 +1,4 @@
-package entities;
+package com.astroidsgame.entities;
 
 import javafx.scene.Group;
 import javafx.scene.paint.Color;

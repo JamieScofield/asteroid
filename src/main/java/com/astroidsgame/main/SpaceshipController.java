@@ -1,10 +1,9 @@
-package main;
+package com.astroidsgame.main;
 
 import javafx.scene.Group;
 import javafx.scene.transform.Rotate;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import main.Environment;
 
 
 public class SpaceshipController extends Environment {

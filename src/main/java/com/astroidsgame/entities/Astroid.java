@@ -1,10 +1,10 @@
-package entities;
+package com.astroidsgame.entities;
 
 
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import main.Constants;
+import com.astroidsgame.main.Constants;
 
 import javafx.geometry.Point2D;
 import java.util.Random;

@@ -1,7 +1,7 @@
-package main;
+package com.astroidsgame.main;
 
-import entities.Astroid;
-import entities.Spaceship;
+import com.astroidsgame.entities.Astroid;
+import com.astroidsgame.entities.Spaceship;
 import javafx.scene.Scene;
 import javafx.application.Application;
 import javafx.scene.Group;
