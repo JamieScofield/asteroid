@@ -1,19 +1,16 @@
 package com.astroidsgame.entities;
 
-import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 public class Bullet {
-    private Group bullet;
+    private Bullet(){}
 
 
-    public Bullet(double centerX, double centerY) {
-        Circle bullet =  new Circle(centerX, centerY, 1);
-        bullet.setFill(Color.YELLOW);
-        this.bullet = new Group(bullet);
-    }
-    public Group getBullet() {
-        return bullet;
+    public static Node createBullet() {
+        Circle circle = new Circle(0, 0, 1);
+        circle.setFill(Color.YELLOW);
+        return circle;
     }
 }

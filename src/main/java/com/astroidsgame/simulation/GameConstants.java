@@ -1,6 +1,6 @@
-package com.astroidsgame.main;
+package com.astroidsgame.simulation;
 
-public class Constants {
+public class GameConstants {
 
     public static double screenWidth = 800;
     public static double screenHeight = 800;
@@ -12,7 +12,5 @@ public class Constants {
     public static double getScreenWidth() {
         return screenWidth;
     }
-
-
 
 }
