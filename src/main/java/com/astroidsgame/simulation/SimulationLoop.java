@@ -1,38 +1,34 @@
 package com.astroidsgame.simulation;
 
 import com.astroidsgame.entities.EntityType;
+import com.astroidsgame.math.GeometryMath;
+import com.astroidsgame.math.Vector2D;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.LockSupport;
 
-public class SimulationLoop implements Runnable {
+import static com.astroidsgame.simulation.GameConstants.*;
 
-    private static final long TICK_INTERVAL_NANOS = 16_666_667L; // ~60Hz
-    private static final long BULLET_LIFETIME_NANOS = 250_000_000L;
-    private static final long ASTEROID_WANDER_NANOS = 2_500_000_000L;
-    private static final double SHIP_SPEED_PER_TICK = 4.0;
+public class SimulationLoop implements Runnable {
 
     private final LinkedBlockingQueue<InputEvent> inputQueue;
     private final LinkedBlockingQueue<SimEvent> outputQueue;
-    private final Random random = new Random();
 
     private final ShipState ship = new ShipState(EntityId.next(), new Vector2D(400, 370));
-    private final AsteroidState asteroid;
     private final Map<EntityId, BulletState> bullets = new HashMap<>();
+    private final Map<EntityId, AsteroidState> currentAsteroids = new HashMap<>();
 
     private volatile boolean running = true;
+
+    private int asteroidSpawnCounter = 0;
 
     public SimulationLoop(LinkedBlockingQueue<InputEvent> inputQueue, LinkedBlockingQueue<SimEvent> outputQueue) {
         this.inputQueue = inputQueue;
         this.outputQueue = outputQueue;
-        long now = System.nanoTime();
-        this.asteroid = new AsteroidState(EntityId.next(), GeometryMath.randomAsteroidSpawn(random),
-                GeometryMath.randomWanderTarget(random), now);
     }
 
     public void stop() {
@@ -41,11 +37,16 @@ public class SimulationLoop implements Runnable {
 
     @Override
     public void run() {
+        // create the initial spawn of entities
+        AsteroidState initAsteroid = AsteroidState.createAsteroid();
+        currentAsteroids.put(initAsteroid.getId(), initAsteroid);
+
         outputQueue.offer(new SimEvent.EntitySpawned(
                 ship.getId(), EntityType.SHIP, ship.getPosition().x(), ship.getPosition().y(), ship.getRotationDegrees()));
         outputQueue.offer(new SimEvent.EntitySpawned(
-                asteroid.getId(), EntityType.ASTEROID, asteroid.getPosition().x(), asteroid.getPosition().y(), 0));
+                initAsteroid.getId(), EntityType.ASTEROID, initAsteroid.getPosition().x(), initAsteroid.getPosition().y(), 0));
 
+        // run the sim loop
         while (running) {
             long tickStart = System.nanoTime();
             tick(tickStart);
@@ -64,8 +65,19 @@ public class SimulationLoop implements Runnable {
             outputQueue.offer(new SimEvent.EntityMoved(
                     ship.getId(), ship.getPosition().x(), ship.getPosition().y(), ship.getRotationDegrees()));
         }
+
         updateBullets(nowNanos);
         updateAsteroid(nowNanos);
+
+        if (asteroidSpawnCounter >= 50) {
+            AsteroidState newAsteroid = AsteroidState.createAsteroid();
+            currentAsteroids.put(newAsteroid.getId(), newAsteroid);
+
+            outputQueue.offer(new SimEvent.EntitySpawned(
+                    newAsteroid.getId(), EntityType.ASTEROID, newAsteroid.getPosition().x(), newAsteroid.getPosition().y(), 0));
+            asteroidSpawnCounter = 0;
+        }
+        asteroidSpawnCounter++;
     }
 
     private boolean processInput(long nowNanos) {
@@ -134,14 +146,17 @@ public class SimulationLoop implements Runnable {
     }
 
     private void updateAsteroid(long nowNanos) {
-        double t = Math.min(1.0, (nowNanos - asteroid.getWanderStartNanos()) / (double) ASTEROID_WANDER_NANOS);
-        Vector2D pos = asteroid.getWanderFrom().lerp(asteroid.getWanderTo(), t);
-        asteroid.setPosition(pos);
-        outputQueue.offer(new SimEvent.EntityMoved(asteroid.getId(), pos.x(), pos.y(), 0));
-        if (t >= 1.0) {
-            asteroid.setWanderFrom(pos);
-            asteroid.setWanderTo(GeometryMath.randomWanderTarget(random));
-            asteroid.setWanderStartNanos(nowNanos);
+
+        for (AsteroidState asteroid : currentAsteroids.values()) {
+            double t = Math.min(1.0, (nowNanos - asteroid.getWanderStartNanos()) / (double) ASTEROID_WANDER_NANOS);
+            Vector2D pos = asteroid.getWanderFrom().lerp(asteroid.getWanderTo(), t);
+            asteroid.setPosition(pos);
+            outputQueue.offer(new SimEvent.EntityMoved(asteroid.getId(), pos.x(), pos.y(), 0));
+            if (t >= 1.0) {
+                asteroid.setWanderFrom(pos);
+                asteroid.setWanderTo(GeometryMath.randomWanderTarget(random));
+                asteroid.setWanderStartNanos(nowNanos);
+            }
         }
     }
 }

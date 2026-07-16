@@ -1,5 +1,7 @@
 package com.astroidsgame.simulation;
 
+import com.astroidsgame.math.Vector2D;
+
 import java.util.EnumSet;
 
 public class ShipState {

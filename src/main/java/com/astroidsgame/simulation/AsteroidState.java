@@ -1,5 +1,10 @@
 package com.astroidsgame.simulation;
 
+import com.astroidsgame.math.GeometryMath;
+import com.astroidsgame.math.Vector2D;
+
+import static com.astroidsgame.simulation.GameConstants.random;
+
 public class AsteroidState {
 
     private final EntityId id;
@@ -8,12 +13,18 @@ public class AsteroidState {
     private Vector2D wanderTo;
     private long wanderStartNanos;
 
-    public AsteroidState(EntityId id, Vector2D position, Vector2D wanderTo, long wanderStartNanos) {
+    private AsteroidState(EntityId id, Vector2D position, Vector2D wanderTo, long wanderStartNanos) {
         this.id = id;
         this.position = position;
         this.wanderFrom = position;
         this.wanderTo = wanderTo;
         this.wanderStartNanos = wanderStartNanos;
+    }
+
+    public static AsteroidState createAsteroid() {
+
+         return new AsteroidState(EntityId.next(), GeometryMath.randomAsteroidSpawn(random),
+                GeometryMath.randomWanderTarget(random), System.nanoTime());
     }
 
     public EntityId getId() {

@@ -1,4 +1,4 @@
-package com.astroidsgame.simulation;
+package com.astroidsgame.math;
 
 public record Vector2D(double x, double y) {
 

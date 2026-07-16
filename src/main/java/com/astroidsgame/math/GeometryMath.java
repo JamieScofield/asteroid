@@ -1,4 +1,6 @@
-package com.astroidsgame.simulation;
+package com.astroidsgame.math;
+
+import com.astroidsgame.simulation.GameConstants;
 
 import java.util.Random;
 

@@ -1,5 +1,7 @@
 package com.astroidsgame.simulation;
 
+import com.astroidsgame.math.Vector2D;
+
 public class BulletState {
 
     private final EntityId id;
