@@ -124,11 +124,12 @@ public class SimulationLoop implements Runnable {
     private boolean updateShip() {
         double rotationDelta = 0;
         Vector2D delta = Vector2D.ZERO;
+        Vector2D forward = GeometryMath.rotate(SHIP_FORWARD, ship.getRotationDegrees());
         if (ship.getPressedKeys().contains(GameKey.W)) {
-            delta = delta.add(new Vector2D(0, -SHIP_SPEED_PER_TICK));
+            delta = delta.add(forward.scale(SHIP_SPEED_PER_TICK));
         }
         if (ship.getPressedKeys().contains(GameKey.S)) {
-            delta = delta.add(new Vector2D(0, SHIP_SPEED_PER_TICK));
+            delta = delta.add(forward.scale(-SHIP_SPEED_PER_TICK));
         }
         if (ship.getPressedKeys().contains(GameKey.A)) {
             rotationDelta += 5;
