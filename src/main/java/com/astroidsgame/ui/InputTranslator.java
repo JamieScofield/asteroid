@@ -30,6 +30,7 @@ public class InputTranslator {
             case A -> Optional.of(GameKey.A);
             case S -> Optional.of(GameKey.S);
             case D -> Optional.of(GameKey.D);
+            case SPACE -> Optional.of(GameKey.SPACE);
             default -> Optional.empty();
         };
     }

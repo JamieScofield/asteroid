@@ -32,7 +32,7 @@ tasks.withType(JavaCompile) {
 
 application {
     mainModule = 'com.astroidsgame.main'
-    mainClass = 'com.astroidsgame.ui.GameApplication'
+    mainClass = 'com.astroidsgame.GameApplication'
 }
 
 dependencies {

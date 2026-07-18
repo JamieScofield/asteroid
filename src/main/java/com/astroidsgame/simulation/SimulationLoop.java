@@ -1,6 +1,7 @@
 package com.astroidsgame.simulation;
 
 import com.astroidsgame.entities.EntityType;
+import com.astroidsgame.entities.Ship;
 import com.astroidsgame.math.GeometryMath;
 import com.astroidsgame.math.Vector2D;
 
@@ -85,11 +86,16 @@ public class SimulationLoop implements Runnable {
         InputEvent event;
         while ((event = inputQueue.poll()) != null) {
             switch (event) {
-                case InputEvent.KeyDown keyDown -> ship.getPressedKeys().add(keyDown.key());
+                case InputEvent.KeyDown keyDown -> {
+                    ship.getPressedKeys().add(keyDown.key());
+                    if (keyDown.key().equals(GameKey.A) || keyDown.key().equals(GameKey.D)) {
+                        rotationChanged = true;
+                    }
+                }
                 case InputEvent.KeyUp keyUp -> ship.getPressedKeys().remove(keyUp.key());
                 case InputEvent.MouseClicked mouseClicked -> {
-                    handleMouseClick(mouseClicked, nowNanos);
-                    rotationChanged = true;
+//                    handleMouseClick(mouseClicked, nowNanos);
+//                    rotationChanged = true;
                 }
             }
         }
@@ -97,25 +103,26 @@ public class SimulationLoop implements Runnable {
     }
 
     private void handleMouseClick(InputEvent.MouseClicked click, long nowNanos) {
-        double delta = GeometryMath.calculateTurnDelta(
-                ship.getPosition(), ship.getRotationDegrees(), click.x(), click.y());
-        ship.setRotationDegrees(ship.getRotationDegrees() + delta);
-
-        Vector2D tip = GeometryMath.shipTipPosition(ship.getPosition(), ship.getRotationDegrees());
-        Vector2D direction = new Vector2D(click.x(), click.y()).subtract(tip);
-        Vector2D unitDirection = direction.length() > 0
-                ? direction.normalize()
-                // click landed exactly on the tip - fall back to the ship's facing direction
-                : GeometryMath.rotate(new Vector2D(0, 1), ship.getRotationDegrees());
-        Vector2D velocity = unitDirection.scale(BULLET_SPEED_PER_SECOND);
-
-        EntityId bulletId = EntityId.next();
-        BulletState bullet = new BulletState(bulletId, tip, velocity, nowNanos);
-        bullets.put(bulletId, bullet);
-        outputQueue.offer(new SimEvent.EntitySpawned(bulletId, EntityType.BULLET, tip.x(), tip.y(), 0));
+//        double delta = GeometryMath.calculateTurnDelta(
+//                ship.getPosition(), ship.getRotationDegrees(), click.x(), click.y());
+//        ship.setRotationDegrees(ship.getRotationDegrees() + delta);
+//
+//        Vector2D tip = GeometryMath.shipTipPosition(ship.getPosition(), ship.getRotationDegrees());
+//        Vector2D direction = new Vector2D(click.x(), click.y()).subtract(tip);
+//        Vector2D unitDirection = direction.length() > 0
+//                ? direction.normalize()
+//                // click landed exactly on the tip - fall back to the ship's facing direction
+//                : GeometryMath.rotate(new Vector2D(0, 1), ship.getRotationDegrees());
+//        Vector2D velocity = unitDirection.scale(BULLET_SPEED_PER_SECOND);
+//
+//        EntityId bulletId = EntityId.next();
+//        BulletState bullet = new BulletState(bulletId, tip, velocity, nowNanos);
+//        bullets.put(bulletId, bullet);
+//        outputQueue.offer(new SimEvent.EntitySpawned(bulletId, EntityType.BULLET, tip.x(), tip.y(), 0));
     }
 
     private boolean updateShip() {
+        double rotationDelta = 0;
         Vector2D delta = Vector2D.ZERO;
         if (ship.getPressedKeys().contains(GameKey.W)) {
             delta = delta.add(new Vector2D(0, -SHIP_SPEED_PER_TICK));
@@ -124,15 +131,17 @@ public class SimulationLoop implements Runnable {
             delta = delta.add(new Vector2D(0, SHIP_SPEED_PER_TICK));
         }
         if (ship.getPressedKeys().contains(GameKey.A)) {
-            delta = delta.add(new Vector2D(-SHIP_SPEED_PER_TICK, 0));
+            rotationDelta += 5;
+//            delta = delta.add(new Vector2D(-SHIP_SPEED_PER_TICK, 0));
         }
         if (ship.getPressedKeys().contains(GameKey.D)) {
-            delta = delta.add(new Vector2D(SHIP_SPEED_PER_TICK, 0));
+//            delta = delta.add(new Vector2D(SHIP_SPEED_PER_TICK, 0));
         }
-        if (delta.equals(Vector2D.ZERO)) {
+        if (delta.equals(Vector2D.ZERO) && rotationDelta == 0) {
             return false;
         }
         ship.setPosition(GeometryMath.wrapAround(ship.getPosition().add(delta)));
+        ship.setRotationDegrees(ship.getRotationDegrees() + rotationDelta);
         return true;
     }
 
@@ -166,5 +175,9 @@ public class SimulationLoop implements Runnable {
                 asteroid.setWanderStartNanos(nowNanos);
             }
         }
+    }
+
+    ShipState getShipState() {
+        return this.ship;
     }
 }

@@ -4,5 +4,6 @@ public enum GameKey {
     W,
     A,
     S,
-    D
+    D,
+    SPACE
 }

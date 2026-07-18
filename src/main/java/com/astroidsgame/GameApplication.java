@@ -1,8 +1,10 @@
-package com.astroidsgame.ui;
+package com.astroidsgame;
 
 import com.astroidsgame.simulation.GameConstants;
 import com.astroidsgame.simulation.InputEvent;
 import com.astroidsgame.simulation.SimulationEngine;
+import com.astroidsgame.ui.InputTranslator;
+import com.astroidsgame.ui.RenderLoop;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
