@@ -132,10 +132,9 @@ public class SimulationLoop implements Runnable {
         }
         if (ship.getPressedKeys().contains(GameKey.A)) {
             rotationDelta += 5;
-//            delta = delta.add(new Vector2D(-SHIP_SPEED_PER_TICK, 0));
         }
         if (ship.getPressedKeys().contains(GameKey.D)) {
-//            delta = delta.add(new Vector2D(SHIP_SPEED_PER_TICK, 0));
+            rotationDelta-= 5;
         }
         if (delta.equals(Vector2D.ZERO) && rotationDelta == 0) {
             return false;

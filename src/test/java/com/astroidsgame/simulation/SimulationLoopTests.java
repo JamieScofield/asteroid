@@ -37,4 +37,32 @@ public class SimulationLoopTests {
         simLoop.stop();
         simThread.join();
     }
+
+    @Test
+    void spaceshipRotatesWhenDKeyIsPressed() throws InterruptedException {
+        LinkedBlockingQueue<InputEvent> testInputQueue = new LinkedBlockingQueue<>();
+        LinkedBlockingQueue<SimEvent> testOutPutQueue = new LinkedBlockingQueue<>();
+        SimulationLoop simLoop = new SimulationLoop(testInputQueue, testOutPutQueue);
+
+        Thread simThread = new Thread(simLoop);
+        simThread.start();
+
+        var testShip = simLoop.getShipState();
+        var keyDownEvent = Optional.of(GameKey.D).map(InputEvent.KeyDown::new);
+        var keyUpEvent = Optional.of(GameKey.D).map(InputEvent.KeyUp::new);
+        testInputQueue.put(keyDownEvent.get());
+
+        SimEvent event;
+        do {
+            event = testOutPutQueue.poll(1, TimeUnit.SECONDS);
+            assertNotNull(event, "timed out waiting for ship to rotate");
+        } while (!(event instanceof SimEvent.EntityMoved moved) || !moved.id().equals(testShip.getId()));
+
+        testInputQueue.put(keyUpEvent.get());
+
+        assertTrue(testShip.getRotationDegrees() < 0);
+
+        simLoop.stop();
+        simThread.join();
+    }
 }
